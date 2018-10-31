@@ -1,0 +1,41 @@
+<!<!DOCTYPE html>
+<html>
+<head>
+	<title>Question Making Library demo</title>
+
+	<link href="default.css" rel='stylesheet'>
+	
+	<!-- libraries -->
+	<link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel='stylesheet'>
+	<link href="bower_components/components-font-awesome/css/fontawesome-all.min.css" rel='stylesheet'>
+
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="bower_components/popper.js/dist/umd/popper.min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="bower_components/angular/angular.min.js"></script>
+
+	<script src="main.js"></script>	
+
+	<!-- service -->
+	<script src="services/questionService.js"></script>
+	<script src="services/utilService.js"></script>
+
+	<!-- controller -->
+	<script src="controllers/mainController.js"></script>
+	<script src="controllers/qmlc.js"></script>
+
+	<!-- directive -->
+	<script src="directives/qmld.js"></script>
+
+</head>
+<body ng-app="mainModule">
+
+	<div ng-controller="mainController" class="container">
+		<div style="padding-top: 50px; text-align: center">
+			<h2>Question Making Library demo</h2>
+		</div>
+		<ci-question-maker question="question"></ci-question-maker>
+	</div>
+
+</body>
+</html>

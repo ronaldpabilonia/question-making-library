@@ -1,0 +1,676 @@
+<div class="card qml-container">
+	<div class="qml-edit">
+
+		<div class="row">
+			<div class="col">
+				<div class="form-group">
+				    <label>Question type</label>
+				    <select class="form-control"
+				    	    ng-options="type.text for type in questionTypes"
+				    	    ng-model="selectedQuestionType"
+				    	    ng-change="changeQuestionType(selectedQuestionType)">
+				   	</select>
+				</div>
+				<div class="form-group">
+					<label>Question text</label>
+					<div class="input-group">
+						<textarea class="form-control"
+					   		      rows="3"
+					   		      placeholder="Enter question text"
+					   		      ng-model="question.text">
+					   	</textarea>
+					</div>
+					<div class="input-group">
+					    <input type="text"
+					   	   	   class="form-control"
+					   	   	   placeholder="Enter reference name"
+					   	   	   ng-model="question.config.referenceName">
+					   	<input ng-cloak
+					   		   ng-if="question.type !== 'text'"
+					   		   type="text"
+					   	   	   class="form-control"
+					   	   	   placeholder="Enter variable label"
+					   	   	   ng-model="question.varlabel">
+					    <input type="text"
+					    	   class="form-control"
+					    	   placeholder="Enter QSL snippet"
+					    	   ng-model="question.config.qslSnippet">
+					</div>
+					<small class="form-text text-muted">E.g., What is your favorite day of the week?</small>
+				</div>
+
+
+				<div ng-cloak
+					 ng-if="question.type === 'multiple'
+					 		|| question.type === 'multiple-colorpicker'"
+					 class="form-group">
+					<ul class="nav nav-tabs">
+					  	<li class="nav-item">
+					    	<a class="nav-link"
+					    	   href=""
+					    	   ng-click="question.config.mcoption = 'minmax';"
+					    	   ng-class="{'active' : question.config.mcoption === 'minmax'}">Range of choices</a>
+					  	</li>
+					  	<li class="nav-item">
+					    	<a class="nav-link"
+					    	   href=""
+					    	   ng-click="question.config.mcoption = 'exactly';"
+					    	   ng-class="{'active' : question.config.mcoption === 'exactly'}">Exact number of choice</a>
+					  	</li>
+					</ul>
+					<div ng-cloak ng-if="question.config.mcoption === 'minmax'" class="input-group qml-mcoption">
+						<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+							   type="number"
+							   class="form-control"
+							   placeholder="Enter minimum number"
+							   ng-model="question.config.min"
+							   min="1"
+							   max="{{question.rows.length}}">
+						<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+							   type="number"
+							   class="form-control"
+							   placeholder="Enter maximum number"
+							   ng-model="question.config.max"
+							   min="1"
+							   max="{{question.rows.length}}">
+					</div>
+					<div ng-cloak ng-if="question.config.mcoption === 'exactly'" class="input-group qml-mcoption">
+						<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+							   type="number"
+							   class="form-control"
+							   placeholder="Enter exact number"
+							   ng-model="question.config.exactly"
+							   min="1"
+							   max="{{question.rows.length}}">
+					</div>
+				</div>
+
+
+				<div ng-cloak
+					 ng-if="question.type === 'rank'
+					 		|| question.type === 'scale'
+					 		|| question.type === 'open'"
+					 class="form-group">
+					<label>Don't know option</label>
+					<div class="input-group">
+					  	<div class="input-group-prepend">
+					    	<button class="btn btn-outline-secondary"
+					    		    type="button"
+					    		    ng-click="question.config.dontKnow = question.config.dontKnow ? false : true"
+					    		    ng-class="{'active' : question.config.dontKnow}">Enable</button>
+					  	</div>
+					  	<input type="text"
+					  		   class="form-control tooltipped"
+					  		   placeholder="Not sure"
+					  		   ng-model="question.config.dontKnowText"
+					  		   ng-disabled="!question.config.dontKnow"
+					  		   data-toggle="tooltip"
+			    			   data-placement="top"
+			    			   title="Customize don't know text (dk_text). Defaults to 'Not sure'"
+			    			   onmouseenter="$(this).tooltip('show')">
+					</div>
+				</div>
+
+
+				<div ng-cloak
+					 ng-if="question.type !== 'text' && question.type !== 'open'"
+					 class="form-group">
+					<label>Option list name</label>
+					<div class="input-group">
+					    <input type="text"
+					   	   	   class="form-control"
+					   	   	   placeholder="Enter option list name"
+					   	   	   ng-model="question.responseListSrc">
+					</div>
+				</div>	
+
+			</div>
+			<div class="col">
+
+				<div ng-cloak
+					 ng-if="question.type !== 'text'"
+					 class="form-group">
+				    <label>Question validation</label>
+				    <select class="form-control"
+				    	    ng-options="type.text for type in questionValidations"
+				    	    ng-model="selectedValidationType"
+				    	    ng-change="changeValidationType(selectedValidationType)">
+				   	</select>
+				</div>
+
+				<div ng-cloak
+					 ng-if="question.type === 'open'"
+					 class="form-group">
+				    <label>Allowed input types</label><br/>
+					<div class="btn-group btn-group-toggle" data-toggle="buttons">
+					  	<label class="btn btn-secondary active" ng-click="question.config.openType = 'open'">
+					    	<input type="radio"
+					    		   name="allowed-types"
+					    		   ng-checked="question.config.openType === 'open'"> Any
+					  	</label>
+					  	<label class="btn btn-secondary" ng-click="question.config.openType = 'open-int'">
+					    	<input type="radio"
+					    		   name="allowed-types"
+					    		   ng-checked="question.config.openType === 'open-int'"> Integer only
+					  	</label>
+					  	<label class="btn btn-secondary" ng-click="question.config.openType = 'open-real'">
+					    	<input type="radio"
+					    		   name="allowed-types"
+					    		   ng-checked="question.config.openType === 'open-real'"> Decimal
+					  	</label>
+					  	<label class="btn btn-secondary" ng-click="question.config.openType = 'email'">
+					    	<input type="radio"
+					    		   name="allowed-types"
+					    		   ng-checked="question.config.openType === 'email'"> Email
+					  	</label>
+					</div>
+				</div>
+
+				<div ng-cloak
+					 ng-if="question.type === 'open' && question.config.openType === 'open-real'"
+					 class="form-group">
+				    <label>Decimal separators</label><br/>
+					<div class="btn-group btn-group-toggle" data-toggle="buttons">
+					  	<label class="btn btn-secondary active" ng-click="question.config.decimal_sep = '.'">
+					    	<input type="radio"
+					    		   name="decimal-separator"
+					    		   ng-checked="question.config.decimal_sep === '.'"> Dot
+					  	</label>
+					  	<label class="btn btn-secondary" ng-click="question.config.decimal_sep = ','">
+					    	<input type="radio"
+					    		   name="decimal-separator"
+					    		   ng-checked="question.config.openType === ','"> Comma
+					  	</label>
+					</div>
+				</div>
+
+				<div ng-cloak
+					 class="row"
+					 ng-if="question.type === 'open'">
+					<div class="col">
+						<div class="form-group">
+							<label>Textbox width</label>
+							<div class="input-group">
+								<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									   type="number"
+									   class="form-control"
+									   placeholder="Enter textbox width"
+									   ng-model="question.config.textBoxWidth"
+									   min="1">
+							</div>
+						</div>	
+					</div>					
+					<div class="col">
+						<div class="form-group">
+							<label>Textbox height</label>
+							<div class="input-group">
+								<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									   type="number"
+									   class="form-control"
+									   placeholder="Enter textbox height"
+									   ng-model="question.config.textBoxHeight"
+									   min="1">
+							</div>
+						</div>	
+					</div>
+				</div>
+
+				<div ng-cloak
+					 ng-if="question.type === 'text'"
+					 class="row">
+					<div class="col">
+						<div class="form-check">
+						  	<input class="form-check-input"
+						  		   type="checkbox"
+						  		   value=""
+						  		   id="text-checkbox"
+						  		   ng-model="question.config.isScript">
+						  	<label class="form-check-label" for="text-checkbox">The input in the editor is programming script</label>
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+						    <label>Script type</label>
+						    <select class="form-control"
+						    	    ng-options="script.text for script in scriptTypes"
+						    	    ng-model="selectedScriptType"
+						    	    ng-change="changeScriptType(selectedScriptType)">
+						   	</select>
+						</div>
+					</div>
+				</div>
+
+
+				<div ng-cloak
+					 ng-if="question.type === 'dropdown'"
+					 class="form-group">
+					<label>Default text</label>
+					<div class="input-group">
+					    <input type="text"
+					   	   	   class="form-control"
+					   	   	   placeholder="Enter default text"
+					   	   	   ng-model="question.config.defaultText">
+					</div>
+				</div>	
+				<div ng-cloak
+					 ng-if="question.type === 'rank'"
+					 class="form-group">
+					<label>Max. slots</label>
+					<div class="input-group">
+					    <input type="text"
+					   	   	   class="form-control"
+					   	   	   placeholder="Enter maximum slots"
+					   	   	   ng-model="question.config.slots">
+					</div>
+				</div>	
+				<div ng-cloak
+					 ng-if="question.type === 'single-colorpicker'
+					 		|| question.type === 'multiple-colorpicker'
+					 		|| question.type === 'dyngrid-check'
+					 		|| question.type === 'dyngrid'"
+					 class="row">
+					<div class="col">
+						<div class="form-group">
+						    <label>Answer selected color</label>
+						    <select class="form-control"
+						    	    ng-options="color.charAt(0).toUpperCase() + color.slice(1) for color in ['blue', 'brown', 'green', 'orange', 'purple', 'red', 'teal', 'yellow']"
+						    	    ng-model="question.config.colorPickerColor">
+						   	</select>
+						</div>
+					</div>
+					<div ng-cloak
+						 ng-if="question.type === 'multiple-colorpicker'
+						 		|| question.type === 'single-colorpicker'"
+						 class="col">
+						<div class="form-group">
+						    <label>Response options layout</label>
+						    <select class="form-control"
+						    	    ng-options="layout.charAt(0).toUpperCase() + layout.slice(1) for layout in ['vertical', 'horizontal']"
+						    	    ng-model="question.config.optionsLayout">
+						   	</select>
+						</div>
+					</div>
+				</div>
+
+				<div ng-cloak
+					 ng-if="question.type === 'single'
+					 		|| question.type === 'multiple'
+					 		|| question.type === 'single-colorpicker'
+					 		|| question.type === 'multiple-colorpicker'
+					 		|| question.type === 'dyngrid-check'
+					 		|| question.type === 'dyngrid'"
+					 class="form-group">
+					<label>Columns</label>
+					<div class="input-group">
+					    <input type="text"
+					   	   	   class="form-control"
+					   	   	   placeholder="Enter column"
+					   	   	   ng-model="question.config.columns"
+					   	   	   onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+					</div>
+				</div>	
+
+				<div ng-cloak
+					 class="row"
+					 ng-if="question.type === 'grid-check'
+					 		|| question.type === 'grid'
+					 		|| question.type === 'dyngrid-check'
+					 		|| question.type === 'dyngrid'
+					 		|| question.type === 'grid-open'
+					 		|| question.type === 'rank'">
+					<div ng-cloak
+						 ng-if="question.type === 'rank'"
+						 class="col">
+						<div class="form-group">
+							<label>Min. number of choices per page</label>
+							<div class="input-group">
+								<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									   type="number"
+									   class="form-control"
+									   placeholder="Enter minimum number of choices per page"
+									   ng-model="question.config.min"
+									   min="1"
+									   max="{{question.rows.length}}">
+							</div>
+						</div>	
+					</div>					
+					<div ng-cloak
+						 ng-if="question.type !== 'rank'"
+						 class="col">
+						<div class="form-group">
+							<label>Max. number of choices per page</label>
+							<div class="input-group">
+								<input onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									   type="number"
+									   class="form-control"
+									   placeholder="Enter maximum number of choices per page"
+									   ng-model="question.config.max"
+									   min="1"
+									   max="{{question.rows.length}}">
+							</div>
+						</div>	
+					</div>
+					<div ng-cloak
+						 ng-if="question.type === 'grid-open'"
+						 class="col">
+						<div class="form-group">
+							<label class="tooltipped"
+								   data-toggle="tooltip"
+				    			   data-placement="top"
+				    			   title="Specify the total sum of each column in your grid; respondent will be required to enter responses that equal that sum"
+				    			   onmouseenter="$(this).tooltip('show')">
+				    			Required response per column
+				    		</label>
+						    <input type="number"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter required response on each column"
+						   	   	   ng-model="question.config.colsum"
+						   	   	   onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+						</div>
+					</div>
+				</div>
+
+
+				<div ng-cloak
+					 ng-if="question.type === 'scale'
+					 	   	|| (question.type === 'open' && question.config.openType === 'open-int')
+					 	   	|| (question.type === 'open' && question.config.openType === 'open-real')"
+					 class="row">
+					<div class="col">
+						<div class="form-group">
+						    <label>Min. value</label>
+						  	<input type="number"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter minimum value"
+						   	   	   ng-model="question.config.intRangeMin"
+						   	   	   onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+						    <label>Max. value</label>
+						  	<input type="number"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter maximum value"
+						   	   	   ng-model="question.config.intRangeMax"
+						   	   	   onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+						</div>
+					</div>
+				</div>
+
+
+				<div ng-cloak
+					 ng-if="question.type === 'scale'
+					 		|| question.type === 'open'">
+					<div class="form-group">
+						<ul ng-cloak ng-if="question.type === 'scale'" class="nav nav-tabs">
+						  	<li ng-repeat="pair in question.config.scalepairs" class="nav-item">
+						    	<a class="nav-link"
+						    	   href=""
+						    	   ng-click="setScalePairIndex($index)"
+						    	   ng-class="{'active' : question.config.scalePairIndex === $index}">{{$index + 1}}</a>
+						  	</li>
+						  	<li class="nav-item">
+						  		<a class="nav-link btn-success"
+						  		   href=""
+						  		   ng-click="addScalePair()">Add</a>
+						  	</li>
+						</ul>
+						<div ng-cloak ng-if="question.type === 'scale'" class="input-group qml-scales">
+						    <input type="text"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter left text"
+						   	   	   ng-model="question.config.scalepairs[question.config.scalePairIndex].left"
+						   	   	   ng-change="question.config.left = question.config.scalepairs[question.config.scalePairIndex].left">
+						   	<input type="text"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter right text"
+						   	   	   ng-model="question.config.scalepairs[question.config.scalePairIndex].right"
+						   	   	   ng-change="question.config.right = question.config.scalepairs[question.config.scalePairIndex].right">
+							<div class="input-group-append">
+								<button class="btn btn-outline-danger"
+									    type="button"
+									    ng-click="removeScalePair(question.config.scalePairIndex)"
+									    ng-disabled="question.config.scalepairs.length === 1">
+									<i class="far fa-trash-alt"></i>
+								</button>
+							</div>
+						</div>
+						<div ng-cloak ng-if="question.type === 'open'" class="input-group qml-scales">
+						    <input type="text"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter left text"
+						   	   	   ng-model="question.config.left">
+						   	<input type="text"
+						   	   	   class="form-control"
+						   	   	   placeholder="Enter right text"
+						   	   	   ng-model="question.config.right">
+						</div>
+					</div>
+				</div>
+
+
+
+
+				<div class="form-group">
+				    <label>Base description / Filter text</label>
+					<textarea class="form-control"
+				   		      rows="3"
+				   		      placeholder="Enter base description"
+				   		      ng-model="question.config.basedesc"
+				   		      ng-change="addBaseToBaseDesc()">
+				   	</textarea>
+				</div>
+				<div class="form-group">
+					<ul class="nav nav-tabs">
+					  	<li class="nav-item">
+					    	<a class="nav-link"
+					    	   href=""
+					    	   ng-click="ui.general_notes = false;"
+					    	   ng-class="{'active' : !ui.general_notes}">Scripting assistance notes</a>
+					  	</li>
+					  	<li class="nav-item">
+					    	<a class="nav-link"
+					    	   href=""
+					    	   ng-click="ui.general_notes = true;"
+					    	   ng-class="{'active' : ui.general_notes}">General notes</a>
+					  	</li>
+					</ul>
+					<div class="input-group qml-notes">
+						<div class="input-group-prepend">
+						    <button class="btn btn-outline-secondary tooltipped"
+						    		type="button"
+						    		data-toggle="tooltip"
+				    				data-placement="top"
+				    				title="Add timestamp to note"
+				    				ng-click="addTimestampToNote()">
+						    	<i class="fas fa-clock"></i>
+						   	</button>
+						</div>
+						<textarea ng-cloak ng-if="!ui.general_notes"
+							      class="form-control"
+					   		      placeholder="Enter scripting assistance notes"
+					   		      ng-model="question.config.scriptAssistNote"
+					   		      rows="3">
+					   	</textarea>
+					   	<textarea ng-cloak ng-if="ui.general_notes"
+							      class="form-control"
+					   		      placeholder="Enter general notes"
+					   		      ng-model="question.config.note"
+					   		      rows="3">
+					   	</textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div ng-cloak
+			 ng-if="question.type !== 'scale' && question.type !== 'open' && question.type !== 'text'"
+			 class="row">
+			<div class="col">
+				<div ng-include="'rows/edit/rows.html'"></div>
+			</div>
+			<div ng-cloak
+				 ng-if="question.type === 'grid'
+				 		|| question.type === 'grid-check'
+				 		|| question.type === 'dyngrid-check'
+				 		|| question.type === 'dyngrid'
+				 		|| question.type === 'grid-open'"
+				 class="col">
+				<div ng-include="'columns/edit/columns.html'"></div>
+			</div>
+		</div>
+	</div>
+	<hr/>
+	<div class="qml-display">
+		<div class="qml-setting-display card">
+			<div class="form-check qml-settings-container">
+				<span>Question type:</span>
+				<span><b>{{selectedQuestionType.text}}</b></span>
+			</div>
+			<div class="form-check qml-settings-container">
+				<span>Row order:</span>
+				<span><b>{{question.config.order.charAt(0).toUpperCase() + question.config.order.slice(1)}}</b></span>
+			</div>
+			<div class="form-check qml-settings-container">
+				<span>Column order:</span>
+				<span><b>{{question.config.colorder.charAt(0).toUpperCase() + question.config.colorder.slice(1)}}</b></span>
+			</div>
+			<div ng-if="question.responseListSrc" class="form-check qml-settings-container">
+				<span>Option list name:</span>
+				<span><b>{{question.responseListSrc}}</b></span>
+			</div>
+
+			<div ng-if="question.type === 'single-colorpicker'
+						|| question.type === 'multiple-colorpicker'
+						|| question.type === 'dyngrid-check'
+						|| question.type === 'dyngrid'"
+				 class="form-check qml-settings-container">
+				<span>Answer selected color:</span>
+				<span><b>{{question.config.colorPickerColor.charAt(0).toUpperCase() + question.config.colorPickerColor.slice(1)}}</b></span>
+			</div>
+
+			<div ng-if="question.type === 'text'" class="form-check qml-settings-container">
+				<span>Script type:</span>
+				<span><b>{{selectedScriptType.text}}</b></span>
+			</div>
+			<div ng-if="question.type === 'open'" class="form-check qml-settings-container">
+				<span>Allowed input types:</span>
+				<span><b>{{question.config.openType.charAt(0).toUpperCase() + question.config.openType.slice(1)}}</b></span>
+			</div>
+			<div ng-if="question.type === 'open' && question.config.openType === 'open-real'" class="form-check qml-settings-container">
+				<span>Decimal separator:</span>
+				<span><b>{{question.config.decimal_sep}} ({{question.config.decimal_sep === '.' ? 'Dot' : 'Comma'}})</b></span>
+			</div>
+			<div ng-if="question.config.basedesc" class="form-check qml-settings-container">
+				<span>Base description:</span>
+				<span><b>{{question.config.basedesc}}</b></span>
+			</div>
+			<div ng-if="question.config.scriptAssistNote" class="form-check qml-settings-container">
+				<span>Scripting assistance notes:</span>
+				<span><b>{{question.config.scriptAssistNote}}</b></span>
+			</div>
+			<div ng-if="question.config.note" class="form-check qml-settings-container">
+				<span>General assistance notes:</span>
+				<span><b>{{question.config.note}}</b></span>
+			</div>
+			<div ng-if="question.config.columns" class="form-check qml-settings-container">
+				<span>Columns:</span>
+				<span><b>{{question.config.columns}}</b></span>
+			</div>
+			<div ng-if="question.config.textBoxWidth" class="form-check qml-settings-container">
+				<span>Textbox width:</span>
+				<span><b>{{question.config.textBoxWidth}}</b></span>
+			</div>
+			<div ng-if="question.config.textBoxHeight" class="form-check qml-settings-container">
+				<span>Textbox height:</span>
+				<span><b>{{question.config.textBoxHeight}}</b></span>
+			</div>
+
+			<div ng-if="question.config.intRangeMin" class="form-check qml-settings-container">
+				<span>Integer min. value:</span>
+				<span><b>{{question.config.intRangeMin}}</b></span>
+			</div>
+			<div ng-if="question.config.intRangeMax" class="form-check qml-settings-container">
+				<span>Integer max. value:</span>
+				<span><b>{{question.config.intRangeMax}}</b></span>
+			</div>
+
+			<div ng-if="question.config.left" class="form-check qml-settings-container">
+				<span>Left text:</span>
+				<span><b>{{question.config.left}}</b></span>
+			</div>
+			<div ng-if="question.config.right" class="form-check qml-settings-container">
+				<span>Right text:</span>
+				<span><b>{{question.config.right}}</b></span>
+			</div>
+			<div ng-if="question.config.dontKnowText" class="form-check qml-settings-container">
+				<span>Don't know text:</span>
+				<span><b>{{question.config.dontKnowText}}</b></span>
+			</div>
+		</div>
+		<div class="qml-title-display card">
+			<div class="form-check qml-text-container">
+				<span ng-cloak ng-if="question.config.referenceName"><small><i>({{question.config.referenceName}})</i></small></span>
+				<span ng-cloak ng-if="question.varlabel"><small><i ng-bind="'{' + question.varlabel + '}'"></i></small></span>
+				<span ng-cloak ng-if="question.varlabel"><small><i>*{{question.config.qslSnippet}}*</i></small></span>
+				<span><b>{{question.text}}</b></span>
+			</div>
+		</div>
+		<div ng-cloak
+			 ng-if="question.type !== 'open' && question.type !== 'text'"
+			 class="card qml-option-display">
+			<div ng-if="question.type !== 'grid' && question.type !== 'dyngrid'">
+				<div ng-repeat="row in question.rows" class="form-check">
+					<input class="form-check-input" type="{{question.type === 'single' || question.type === 'dropdown' ? 'radio' : 'checkbox'}}" name="rows" id="option-{{$index}}">
+					<label class="form-check-label" for="option-{{$index}}">
+						<span ng-cloak ng-if="row.config.fixed"><small>[Fixed]</small></span>
+						<span ng-cloak ng-if="row.config.xor"><small>[Exclusive]</small></span>
+						<span ng-cloak ng-if="row.config.otherSpecify"><small>[Specify]</small></span>
+						<span ng-cloak ng-if="row.config.referenceName"><small><i>({{row.config.referenceName}})</i></small></span>
+						<span><b>{{row.text}}</b></span>
+						<small ng-cloak ng-if="row.config.otherSpecify" class="text-muted">{{row.config.otherSpecifyText}}</small>
+					</label>
+				</div>
+			</div>
+			<div ng-if="question.type === 'grid' || question.type === 'dyngrid'">
+				<table ng-cloak
+	                   ng-if="question.rows.length && question.columns.length"
+	                   class="table table-borderless">
+	                <thead>
+	                    <tr>
+	                        <th>&nbsp;</th>
+	                        <th ng-repeat="column in question.columns">
+			                    <span ng-cloak ng-if="column.config.fixed"><small>[Fixed]</small></span>
+								<span ng-cloak ng-if="column.config.xor"><small>[Exclusive]</small></span>
+								<span ng-cloak ng-if="column.config.otherSpecify"><small>[Specify]</small></span>
+								<span ng-cloak ng-if="column.config.referenceName"><small><i>({{column.config.referenceName}})</i></small></span>
+								<span><b>{{column.text}}</b></span>
+								<small ng-cloak ng-if="column.config.otherSpecify" class="text-muted">{{column.config.otherSpecifyText}}</small>
+	                        </th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="row in question.rows">
+	                        <td>
+			                    <span ng-cloak ng-if="row.config.fixed"><small>[Fixed]</small></span>
+								<span ng-cloak ng-if="row.config.xor"><small>[Exclusive]</small></span>
+								<span ng-cloak ng-if="row.config.otherSpecify"><small>[Specify]</small></span>
+								<span ng-cloak ng-if="row.config.referenceName"><small><i>({{row.config.referenceName}})</i></small></span>
+								<span><b>{{row.text}}</b></span>
+								<small ng-cloak ng-if="row.config.otherSpecify" class="text-muted">{{row.config.otherSpecifyText}}</small>
+	                        </td>
+	                        <td ng-repeat="column in question.columns">
+	                        	<div class="form-check">
+	                        		<input class="form-check-input" type="{{question.type === 'grid' ? 'radio' : 'checkbox'}}" name="options">
+	                        		<label class="form-check-label">&nbsp;</label>
+	                        	</div>
+	                        </td>
+	                    </tr>
+	                </tbody>
+	            </table>
+			</div>
+		</div>
+	</div>
+</div>

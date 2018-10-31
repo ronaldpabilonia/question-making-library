@@ -1,0 +1,115 @@
+<label>Rows</label>
+
+<div class="form-group">
+    <label>Row order</label>
+    <select class="form-control"
+    	    ng-options="order.charAt(0).toUpperCase() + order.slice(1) for order in ['normal', 'rotate', 'randomize', 'reverse']"
+    	    ng-model="question.config.order">
+   	</select>
+</div>
+
+<div ng-repeat="row in question.rows"
+	 class="form-group">
+
+	<div class="input-group">
+
+		<div class="input-group-prepend">
+			<button ng-click="setOptionSetting(row, 'fixed')"
+					class="btn btn-outline-secondary tooltipped"
+					ng-class="{'active' : row.config.fixed}"
+					ng-disabled="row.config.xor"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Fixed - Maintains the position of the answer choice. (If the answer choices order set is different than normal.)">
+				<i class="fas fa-thumbtack"></i>
+			</button>
+			<button ng-click="setOptionSetting(row, 'xor')"
+				    class="btn btn-outline-secondary tooltipped"
+				    ng-class="{'active' : row.config.xor}"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Exclusive - If respondent check this option, any other options checked will automatically be unchecked.">
+				<i class="fas fa-star"></i>
+			</button>
+			<button ng-click="setOptionSetting(row, 'otherSpecify')"
+				    class="btn btn-outline-secondary tooltipped"
+				    ng-class="{'active' : row.config.otherSpecify}"
+				    ng-disabled="row.config.xor"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Specify - Provide a textbox for respondent to input their comments.">
+				<i class="fas fa-comment"></i>
+			</button>
+		</div>
+
+
+		<input type="text"
+		   	   class="form-control"
+		   	   placeholder="Enter reference name"
+		   	   ng-model="row.config.referenceName">
+		<input type="text"
+		   	   class="form-control"
+		   	   placeholder="Enter row text"
+		   	   ng-model="row.text">
+		<div class="input-group-append">
+
+			<button class="btn btn-outline-secondary tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Copy option">
+				<i class="far fa-copy"></i>
+			</button>
+
+			<button class="btn btn-outline-secondary tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Move option up">
+				<i class="fas fa-arrow-up"></i>
+			</button>
+
+			<button class="btn btn-outline-secondary tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Move option down">
+				<i class="fas fa-arrow-down"></i>
+			</button>
+
+			<button class="btn btn-outline-danger tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Delete option">
+				<i class="far fa-trash-alt"></i>
+			</button>
+
+		</div>
+	</div>
+
+	<div ng-cloak
+		 ng-if="row.config.otherSpecify"
+		 class="input-group">
+		<div class="input-group-prepend">
+		    <span class="input-group-text">Prompt:</span>
+		</div>
+		<input type="text"
+		   	   class="form-control"
+		   	   placeholder="Enter specify text"
+		   	   ng-model="row.config.otherSpecifyText">
+	</div>
+
+	<small class="form-text text-muted">E.g., Saturday</small>
+</div>
+<script>
+	$(function () {
+	    $('.tooltipped').tooltip({
+	    	container: 'body',
+	    	trigger: 'hover'
+	    })
+	})
+</script>

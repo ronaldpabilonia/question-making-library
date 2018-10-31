@@ -1,0 +1,24 @@
+.qml-container {
+/*	max-height: 300px;
+    overflow-y: auto;*/
+    overflow-x: hidden;
+}
+
+.qml-edit,
+.qml-display,
+.qml-display .card {
+	padding: 1rem;
+}
+
+.qml-option-display,
+.qml-title-display,
+.qml-notes,
+.qml-mcoption,
+.qml-scales {
+	margin-top: 1rem;
+}
+
+.qml-text-container,
+.qml-settings-container {
+	padding: 0 !important;
+}

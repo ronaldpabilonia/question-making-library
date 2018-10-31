@@ -1,0 +1,114 @@
+<label>Columns</label>
+
+<div class="form-group">
+    <label>Column order</label>
+    <select class="form-control"
+    	    ng-options="order.charAt(0).toUpperCase() + order.slice(1) for order in ['normal', 'rotate', 'randomize', 'reverse']"
+    	    ng-model="question.config.colorder">
+   	</select>
+</div>
+
+<div ng-repeat="column in question.columns"
+	 class="form-group">
+	<div class="input-group">
+
+		<div class="input-group-prepend">
+			<button ng-click="setOptionSetting(column, 'fixed')"
+					class="btn btn-outline-secondary tooltipped"
+					ng-class="{'active' : column.config.fixed}"
+					ng-disabled="column.config.xor"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Fixed - Maintains the position of the answer choice. (If the answer choices order set is different than normal.)">
+				<i class="fas fa-thumbtack"></i>
+			</button>
+			<button ng-click="setOptionSetting(column, 'xor')"
+				    class="btn btn-outline-secondary tooltipped"
+				    ng-class="{'active' : column.config.xor}"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Exclusive - If respondent check this option, any other options checked will automatically be unchecked.">
+				<i class="fas fa-star"></i>
+			</button>
+			<button ng-click="setOptionSetting(column, 'otherSpecify')"
+				    class="btn btn-outline-secondary tooltipped"
+				    ng-class="{'active' : column.config.otherSpecify}"
+				    ng-disabled="column.config.xor"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Specify - Provide a textbox for respondent to input their comments.">
+				<i class="fas fa-comment"></i>
+			</button>
+		</div>
+
+
+		<input type="text"
+		   	   class="form-control"
+		   	   placeholder="Enter reference name"
+		   	   ng-model="column.config.referenceName">
+		<input type="text"
+		   	   class="form-control"
+		   	   placeholder="Enter column text"
+		   	   ng-model="column.text">
+		<div class="input-group-append">
+
+			<button class="btn btn-outline-secondary tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Copy option">
+				<i class="far fa-copy"></i>
+			</button>
+
+			<button class="btn btn-outline-secondary tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Move option up">
+				<i class="fas fa-arrow-up"></i>
+			</button>
+
+			<button class="btn btn-outline-secondary tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Move option down">
+				<i class="fas fa-arrow-down"></i>
+			</button>
+
+			<button class="btn btn-outline-danger tooltipped"
+				    type="button"
+				    data-toggle="tooltip"
+				    data-placement="top"
+				    title="Delete option">
+				<i class="far fa-trash-alt"></i>
+			</button>
+
+		</div>
+	</div>
+
+	<div ng-cloak
+		 ng-if="column.config.otherSpecify"
+		 class="input-group">
+		<div class="input-group-prepend">
+		    <span class="input-group-text">Prompt:</span>
+		</div>
+		<input type="text"
+		   	   class="form-control"
+		   	   placeholder="Enter specify text"
+		   	   ng-model="column.config.otherSpecifyText">
+	</div>
+
+	<small class="form-text text-muted">E.g., Sunday</small>
+</div>
+<script>
+	$(function () {
+	    $('.tooltipped').tooltip({
+	    	container: 'body',
+	    	trigger: 'hover'
+	    })
+	})
+</script>
