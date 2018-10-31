@@ -8,7 +8,7 @@ Step 2: ````bower install````
 Step 3: ````node app.js````
 
 
-Change all ````angular.module("mainModule")```` to your module's name (except for main.js)
+Change all *(except for main.js)* ````angular.module("mainModule")```` to the module name of the angular app you are attaching this directive to.
 
 
 
