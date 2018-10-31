@@ -13,6 +13,6 @@ Change all *(except for script/main.js)* ````angular.module("mainModule")```` to
 
 
 
-*Make sure all files are included in the HTML. It should all be there.
+*Make sure all files are included in the HTML. It should all be there. (If the files are already in the html of the app you are attaching this directive to, no need to include it again)
 
 *This directive has not been tested outside of it's bundled test file.
