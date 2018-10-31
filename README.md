@@ -1,11 +1,11 @@
 # question-making-library
 Edit and display for a single question
 
-````npm install````
+Step 1: ````npm install````
 
-````bower install````
+Step 2: ````bower install````
 
-````node app.js````
+Step 3: ````node app.js````
 
 
 Change all ````angular.module("mainModule")```` to your module's name (except for main.js)
